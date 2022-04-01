@@ -17,3 +17,17 @@ CREATE TABLE roles (
     REFERENCES department(id)
     ON DELETE SET NULL
 );
+
+CREATE TABLE employee (
+    id INT NOT NULL PRIMARY KEY,
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
+    role_id INT,
+    manager_id INT, -- This needs to link to the manager ID -- Set Null if manager doesn't exist.
+    FOREIGN KEY (role_id)
+    REFERENCES roles(id)
+    ON DELETE SET NULL,
+    FOREIGN KEY (manager_id)
+    REFERENCES employee(id)
+    ON DELETE SET NULL
+);
