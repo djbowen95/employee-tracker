@@ -18,17 +18,25 @@ function selectTask () {
                 {
                     name: "View All Employees", 
                     value: "viewEmployees"
+                },
+                {
+                    name: "View All Departments",
+                    value: "viewDepartments"
                 }
             ]
-        }]).then(res => {
+        }
+    ]).then(res => {
             const choice = res.choice;
             switch (choice) {
                 case "viewEmployees":
                     viewAllEmployees();
                     break;
-            }
-        })                
-    };
+                case "viewDepartments":
+                    viewAllDepartments();
+                    break;
+                }
+            })
+        };
 
 function viewAllEmployees() {
   db.query("SELECT * FROM employee", (err, data) => {
@@ -37,5 +45,13 @@ function viewAllEmployees() {
     selectTask();
   });
 };
+
+function viewAllDepartments() {
+    db.query("SELECT * FROM department", (err, data) => {
+      if (err) throw err;
+      console.table(data);
+      selectTask();
+    });
+  }
 
 start();
