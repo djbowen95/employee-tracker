@@ -1,0 +1,32 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "A node.js, inquirer and mysql2.0 app that helps a company keep track of employees.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djbowen95/employee-tracker.git"
+  },
+  "keywords": [
+    "employee",
+    "tracker",
+    "bootcamp",
+    "university",
+    "birmingham",
+    "trilogy"
+  ],
+  "author": "Daniel Bowen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/djbowen95/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/djbowen95/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.1",
+    "mysql2": "^2.3.3"
+  }
+}
