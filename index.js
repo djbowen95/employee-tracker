@@ -30,4 +30,12 @@ function selectTask () {
         })                
     };
 
+function viewAllEmployees() {
+  db.query("SELECT * FROM employee", (err, data) => {
+    if (err) throw err;
+    console.table(data);
+    selectTask();
+  });
+};
+
 start();
