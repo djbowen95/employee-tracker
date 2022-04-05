@@ -1,5 +1,4 @@
 const inquirer = require("inquirer");
-const { end } = require("./config/connection");
 const db = require("./config/connection");
 require("console.table");
 
@@ -55,17 +54,23 @@ function viewAllDepartments() {
   });
 }
 
-//THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 function viewAllRoles() {
-  db.query("SELECT roles.id, roles.title, department.department_name AS department FROM roles JOIN department ON roles.department_id = department.id", (err, data) => {
-    if (err) throw err;
-    console.table(data);
-    selectTask();
-  });
+  db.query(
+    "SELECT roles.id, title, department.department_name AS department, salary FROM roles JOIN department ON roles.department_id = department.id",
+    (err, data) => {
+      if (err) throw err;
+      console.table(data);
+      selectTask();
+    }
+  );
 }
 
+// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 function viewAllEmployees() {
-  db.query("SELECT * FROM employee", (err, data) => {
+    db.query("SELECT employee.first_name FROM employee JOIN employee ",
+    // db.query("SELECT employee.id, first_name, roles.title AS job_title, department.department_name AS department, employee.first_name AS manager, FROM employee JOIN employee ON employee.manager_id = employee.id JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id", (err, data) => {
+    // db.query("SELECT employee.id, first_name, last_name, roles.title AS job_title, roles.salary AS salary FROM employee JOIN roles ON employee.role_id = roles.id"
+    (err, data) => {
     if (err) throw err;
     console.table(data);
     selectTask();
