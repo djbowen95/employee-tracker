@@ -189,15 +189,28 @@ function addEmployee() {
     inquirer
       .prompt([
         {
+          type: "input",
+          name: "first_name",
+          message: "What is your new employee's first name?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is your new employee's first name?",
+        },
+        {
           type: "list",
           name: "department",
-          message: "Which department does your new role belong to?",
+          message: "Which department will your new employee belong to?",
           choices: departments,
         },
       ])
       .then((answer) => {
         console.log("Answer is: " + answer);
         let department = answer.department;
+        let employee = { first_name: answer.first_name,
+          last_name: answer.last_name,
+        }
         console.log("Department is: " + department);
         db.query(
           `SELECT * FROM roles WHERE (department_id) = ("${department}")`,
@@ -212,16 +225,6 @@ function addEmployee() {
             inquirer
               .prompt([
                 {
-                  type: "input",
-                  name: "first_name",
-                  message: "What is your new employee's first name?",
-                },
-                {
-                  type: "input",
-                  name: "last_name",
-                  message: "What is your new employee's first name?",
-                },
-                {
                   type: "list",
                   name: "role_id",
                   message:
@@ -233,14 +236,14 @@ function addEmployee() {
                 db.query(
                   "INSERT INTO employee SET ?",
                   {
-                    first_name: answers.first_name,
-                    last_name: answers.last_name,
+                    first_name: employee.first_name,
+                    last_name: employee.last_name,
                     role_id: answers.role_id,
                   },
                   (err, res) => {
                     if (err) throw err;
                     console.log(
-                      `${answers.first_name} ${answers.last_name} was successfully added to the ${department} database.`
+                      `${employee.first_name} ${employee.last_name} was successfully added to the ${department} database.`
                     );
                     selectTask();
                   }
