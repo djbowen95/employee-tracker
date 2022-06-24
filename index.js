@@ -42,7 +42,7 @@ function selectTask() {
           {
             name: "Add a New Employee",
             value: "newEmployee",
-          }
+          },
         ],
       },
     ])
@@ -160,70 +160,107 @@ function createRole() {
         },
       ])
       .then((answers) => {
-        db.query("INSERT INTO roles SET ?", {
-          title: answers.name,
-          salary: answers.salary,
-          department_id: answers.department,
-        },
-        (err, res) => {
-          if (err) throw (err);
-          console.log(`${answers.name} was successfully added to the database.`);
-          selectTask();
-        }
+        db.query(
+          "INSERT INTO roles SET ?",
+          {
+            title: answers.name,
+            salary: answers.salary,
+            department_id: answers.department,
+          },
+          (err, res) => {
+            if (err) throw err;
+            console.log(
+              `${answers.name} was successfully added to the database.`
+            );
+            selectTask();
+          }
         );
       });
   });
 }
 
-function addEmployee () {
+function addEmployee() {
   db.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
     let departments = res.map((department) => ({
       name: department.department_name,
       value: department.id,
     }));
-    inquirer.prompt([
-      {
-        type: "list",
-        name: "department",
-        message: "Which department does your new role belong to?",
-        choices: departments,
-      },
-    ]).then((answer) => {
-      console.log("Answer is: " + answer);
-      let department = answer.department;
-      console.log("Department is: " + department);
-      db.query(`SELECT * FROM roles WHERE (department_id) = ("${department}")`, (err, res) => { // might be value
-        if (err) throw err;
-        console.log("Query response is: " + res);
-        let roles = res.map((role) => ({
-          name: role.title,
-          value: role.id,
-        }));
-        inquirer.prompt([
-          {
-            type: "list",
-            name: "roles",
-            message: "Which role would you like to assign to this employee?",
-            choices: roles,
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "department",
+          message: "Which department does your new role belong to?",
+          choices: departments,
+        },
+      ])
+      .then((answer) => {
+        console.log("Answer is: " + answer);
+        let department = answer.department;
+        console.log("Department is: " + department);
+        db.query(
+          `SELECT * FROM roles WHERE (department_id) = ("${department}")`,
+          (err, res) => {
+            // might be value
+            if (err) throw err;
+            console.log("Query response is: " + res);
+            let roles = res.map((role) => ({
+              name: role.title,
+              value: role.id,
+            }));
+            inquirer
+              .prompt([
+                {
+                  type: "input",
+                  name: "first_name",
+                  message: "What is your new employee's first name?",
+                },
+                {
+                  type: "input",
+                  name: "last_name",
+                  message: "What is your new employee's first name?",
+                },
+                {
+                  type: "list",
+                  name: "role_id",
+                  message:
+                    "Which role would you like to assign to this employee?",
+                  choices: roles,
+                },
+              ])
+              .then((answers) => {
+                db.query(
+                  "INSERT INTO employee SET ?",
+                  {
+                    first_name: answers.first_name,
+                    last_name: answers.last_name,
+                    role_id: answers.role_id,
+                  },
+                  (err, res) => {
+                    if (err) throw err;
+                    console.log(
+                      `${answers.first_name} ${answers.last_name} was successfully added to the ${department} database.`
+                    );
+                    selectTask();
+                  }
+                );
+              });
           }
-        ]).then((answer) => console.log(answer));
-      })
-      
-    })
-  }
-  )
+        );
+      });
+  });
 }
+// Need to add manager ID here.
 
 // Add an employee
 // Create list of departments to display as choices.
 // Change database to auto_increment.
 
-
 // Update an employee's role
 // Query the employees - so there is a list of the employees
 // To update: query the roles, so they can choose the role
-// UPDATE employee SET ? WHERE ? 
+// UPDATE employee SET ? WHERE ?
 // [{role_id - answers (foreign key in employee)}, {id: answer}]
 
 // BONUS: Update employee's manager
