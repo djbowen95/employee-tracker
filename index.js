@@ -39,6 +39,10 @@ function selectTask() {
             name: "Create New Role",
             value: "newRole",
           },
+          {
+            name: "Add a New Employee",
+            value: "newEmployee",
+          }
         ],
       },
     ])
@@ -60,6 +64,8 @@ function selectTask() {
         case "newRole":
           createRole();
           break;
+        case "newEmployee":
+          addEmployee();
       }
     });
 }
@@ -167,6 +173,46 @@ function createRole() {
         );
       });
   });
+}
+
+function addEmployee () {
+  db.query("SELECT * FROM department", (err, res) => {
+    if (err) throw err;
+    let departments = res.map((department) => ({
+      name: department.department_name,
+      value: department.id,
+    }));
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "department",
+        message: "Which department does your new role belong to?",
+        choices: departments,
+      },
+    ]).then((answer) => {
+      console.log("Answer is: " + answer);
+      let department = answer.department;
+      console.log("Department is: " + department);
+      db.query(`SELECT * FROM roles WHERE (department_id) = ("${department}")`, (err, res) => { // might be value
+        if (err) throw err;
+        console.log("Query response is: " + res);
+        let roles = res.map((role) => ({
+          name: role.title,
+          value: role.id,
+        }));
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "roles",
+            message: "Which role would you like to assign to this employee?",
+            choices: roles,
+          }
+        ]).then((answer) => console.log(answer));
+      })
+      
+    })
+  }
+  )
 }
 
 // Add an employee
