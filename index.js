@@ -43,6 +43,10 @@ function selectTask() {
             name: "Add a New Employee",
             value: "newEmployee",
           },
+          {
+            name: "Update Employee's Role",
+            value: "updateEmployee",
+          }
         ],
       },
     ])
@@ -66,6 +70,8 @@ function selectTask() {
           break;
         case "newEmployee":
           addEmployee();
+        case "updateEmployee":
+          updateEmployee();
       }
     });
 }
@@ -256,9 +262,30 @@ function addEmployee() {
 }
 // Need to add manager ID here.
 
-// Add an employee
-// Create list of departments to display as choices.
-// Change database to auto_increment.
+function updateEmployee () {
+  db.query("SELECT * FROM employee", (req, res) => {
+    let employees = res.map((employee) => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id,
+    }));
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "employee",
+        message: "Which employee's role would you like to update?",
+        choices: employees,
+      },
+    ]).then((answer) => {
+      console.log(answer);
+      let updatedEmployee = {
+          employeeId: answer.employee,        
+      };
+      console.log(updatedEmployee);
+    });
+  })
+}
+
+
 
 // Update an employee's role
 // Query the employees - so there is a list of the employees
