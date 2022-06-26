@@ -387,20 +387,4 @@ function updateEmployeeRole() {
 // Update employees manager - pass as input
 
 
-// Update an employee's role
-// Query the employees - so there is a list of the employees
-// To update: query the roles, so they can choose the role
-// UPDATE employee SET ? WHERE ?
-// [{role_id - answers (foreign key in employee)}, {id: answer}]
-
-// BONUS: Update employee's manager <- Easy
-// BONUS: View employee by manager <- Harder
-// BONUS: View employees by department <- Easy
-// BONUS: Delete department <- Medium
-// BONUS: Delete role <- Medium
-// BONUS: Delete employee <- Easy
-// BONUS: Change salaries!
-// BONUS: View 'utilised budget', ie salary for everyone in the department
-// Function to Quit Application
-
 start();
