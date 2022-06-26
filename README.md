@@ -1,8 +1,6 @@
 # Employee Tracker
 <img src="https://img.shields.io/badge/license-MIT-green.svg">
 
-# DEMONSTRATION VIDEO LINK:
-The demonstration video link will go here as soon as I have successfully uploaded it. 
 ## Description
 This application can be used to keep track of your employees, their roles, their salaries, the departments they belong to, and their managers. It is a command-line application, built in the Node.js runtime environment with an interface built in Inquirer. It makes queries to the database using the npm MySQL2 package, and the database is stored with MySQL. 
     

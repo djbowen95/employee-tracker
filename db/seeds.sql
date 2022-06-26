@@ -21,14 +21,14 @@ VALUES ("Sales Executive", 50000, 1),
         ("Google User", 10000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Jack", "Chan", 4, NULL),
-        ("Wendy", "Daniels", 1, NULL),
+VALUES ("Jack", "Chan", 4, 1),
+        ("Wendy", "Daniels", 1, 1),
         ("Chris", "Biscuit", 2, 1),
         ("Sally", "Fox", 2, 2),
         ("Chris", "Beckett", 3, 4),
         ("Alex", "Krakowski", 3, 4),
         ("Joyce", "Kallahan", 5, 2),
-        ("Hendrick, Bozwell", 6, 7),
+        ("Hendrick", "Bozwell", 6, 7),
         ("Chimango", "Akindawe", 6, 7),
         ("Katy", "Beckett", 7, 1),
         ("Madeline", "Fine", 8, 10),
