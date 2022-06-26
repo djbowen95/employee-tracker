@@ -194,6 +194,7 @@ function addEmployee() {
       name: department.department_name,
       value: department.id,
     }));
+
     // Ask new employee name, then which department.
     // Can use department to provide shortlist of roles and managers.
     inquirer
@@ -221,6 +222,7 @@ function addEmployee() {
           first_name: answer.first_name,
           last_name: answer.last_name,
         };
+
         // Query database for all roles from chosen department.
         db.query(
           `SELECT * FROM roles WHERE (department_id) = ("${department}")`,
@@ -231,54 +233,58 @@ function addEmployee() {
               name: role.title,
               value: role.id,
             }));
-            
+
             // Query Database for all staff from chosen department.
-            db.query(`SELECT employee.id, employee.first_name, employee.last_name FROM employee JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id WHERE department.id = "${department}"`,
+            db.query(
+              `SELECT employee.id, employee.first_name, employee.last_name FROM employee JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id WHERE department.id = "${department}"`,
               (err, res) => {
                 if (err) throw err;
                 console.log("Query response is: " + res);
                 let managers = res.map((manager) => ({
-                  name: manager.first_name,
+                  name: `${manager.first_name} ${manager.last_name}`,
                   value: manager.id,
                 }));
-                console.log(managers);
-            inquirer
-              .prompt([
-                {
-                  type: "list",
-                  name: "role_id",
-                  message:
-                    "Which role would you like to assign to this employee?",
-                  choices: roles,
-                },
-                {
-                  type: "list",
-                  name: "manager_id",
-                  message:
-                    "Which member of this department would you like the new employee to report to?",
-                  choices: managers,
-                },
-              ])
-              .then((answers) => {
-                console.log(answers);
-                db.query(
-                  "INSERT INTO employee SET ?",
-                  {
-                    first_name: employee.first_name,
-                    last_name: employee.last_name,
-                    role_id: answers.role_id,
-                    manager_id: answers.manager_id,
-                  },
-                  (err, res) => {
-                    if (err) throw err;
-                    console.log(
-                      `${employee.first_name} ${employee.last_name} was successfully added to the database. Their manager is ${answers.managers}`
+                
+                // Ask user which role and management to assign the new employee.
+                inquirer
+                  .prompt([
+                    {
+                      type: "list",
+                      name: "role_id",
+                      message:
+                        "Which role would you like to assign to this employee?",
+                      choices: roles,
+                    },
+                    {
+                      type: "list",
+                      name: "manager_id",
+                      message:
+                        "Which member of this department would you like the new employee to report to?",
+                      choices: managers,
+                    },
+                  ])
+                  .then((answers) => {
+
+                    // Insert new employee data into the database.
+                    db.query(
+                      "INSERT INTO employee SET ?",
+                      {
+                        first_name: employee.first_name,
+                        last_name: employee.last_name,
+                        role_id: answers.role_id,
+                        manager_id: answers.manager_id,
+                      },
+                      (err, res) => {
+                        if (err) throw err;
+                        console.log(
+                          `${employee.first_name} ${employee.last_name} was successfully added to the database.`
+                        );
+                        selectTask();
+                      }
                     );
-                    selectTask();
-                  }
-                );
-              });
-            });
+                  });
+              }
+            );
           }
         );
       });
