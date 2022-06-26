@@ -109,7 +109,7 @@ function viewAllRoles() {
 // Logs all the employees to the console, including departments and roles.
 function viewAllEmployees() {
   db.query(
-    "SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department, managers.first_name AS manager FROM employee LEFT JOIN employee AS managers ON employee.manager_id = managers.id LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id",
+    `SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department, concat(managers.first_name, " ", managers.last_name) AS manager FROM employee LEFT JOIN employee AS managers ON employee.manager_id = managers.id LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id`,
     (err, data) => {
       if (err) throw err;
       console.table(data);
@@ -212,7 +212,7 @@ function addEmployee() {
         {
           type: "input",
           name: "last_name",
-          message: "What is your new employee's first name?",
+          message: "What is your new employee's last name?",
         },
         {
           type: "list",
@@ -233,7 +233,6 @@ function addEmployee() {
           `SELECT * FROM roles WHERE (department_id) = ("${department}")`,
           (err, res) => {
             if (err) throw err;
-            console.log("Query response is: " + res);
             let roles = res.map((role) => ({
               name: role.title,
               value: role.id,
@@ -244,7 +243,6 @@ function addEmployee() {
               `SELECT employee.id, employee.first_name, employee.last_name FROM employee JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id WHERE department.id = "${department}"`,
               (err, res) => {
                 if (err) throw err;
-                console.log("Query response is: " + res);
                 let managers = res.map((manager) => ({
                   name: `${manager.first_name} ${manager.last_name}`,
                   value: manager.id,
