@@ -231,11 +231,17 @@ function addEmployee() {
               name: role.title,
               value: role.id,
             }));
+            
             // Query Database for all staff from chosen department.
-            // db.query(
-
-            // )
-            let managers = ["Jane", "Frank", "Jessie"];
+            db.query(`SELECT employee.id, employee.first_name, employee.last_name FROM employee JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id WHERE department.id = "${department}"`,
+              (err, res) => {
+                if (err) throw err;
+                console.log("Query response is: " + res);
+                let managers = res.map((manager) => ({
+                  name: manager.first_name,
+                  value: manager.id,
+                }));
+                console.log(managers);
             inquirer
               .prompt([
                 {
@@ -261,6 +267,7 @@ function addEmployee() {
                     first_name: employee.first_name,
                     last_name: employee.last_name,
                     role_id: answers.role_id,
+                    manager_id: answers.manager_id,
                   },
                   (err, res) => {
                     if (err) throw err;
@@ -271,6 +278,7 @@ function addEmployee() {
                   }
                 );
               });
+            });
           }
         );
       });
