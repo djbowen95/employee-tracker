@@ -361,6 +361,12 @@ function updateEmployeeRole() {
                     ])
                     .then((answer) => {
                       console.log(answer);
+
+                      if (answer.newManager === "yes") {
+                        console.log("Selected Yes");
+                      } else if (answer.newManager === "no") {
+                        console.log("Selected No")
+                      }
                     });
                 }
               );
@@ -369,6 +375,11 @@ function updateEmployeeRole() {
       });
   });
 }
+
+// Update employees manager - select employee
+
+// Update employees manager - pass as input
+
 
 // Update an employee's role
 // Query the employees - so there is a list of the employees
