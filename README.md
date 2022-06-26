@@ -32,7 +32,31 @@ The application should now be ready for use.
 ## Usage
 
 1. To open the application, run `node index.js` in the containing directory on the command line.
-2. Answer the prompts to write, retrieve and update data stored within the application.
+2. Answer the prompts to write, retrieve and update data stored within the application. 
+<img src = "./assets/01menu.png" />
+You can execute the following commands:  
+
+#### View Departments
+<img src = "./assets/02viewDepartments.png" />
+
+#### View All Roles
+<img src = "./assets/03viewAllRoles.png" />
+
+#### View All Employees
+<img src = "./assets/04viewAllEmployees.png" />
+
+#### Create Department
+<img src = "./assets/05createDepartment.png" />
+
+#### Create Role
+<img src = "./assets/06createRole.png" />
+
+#### Add a New Employee
+<img src = "./assets/07createEmployee.png" />
+
+#### Update an Employee's Role
+<img src = "./assets/08updateEmployee.png" />
+
 3. When finished, use the EXIT option on the menu, or use CTRL + C / CMD + C to quickly exit the application. 
 
 ## License
