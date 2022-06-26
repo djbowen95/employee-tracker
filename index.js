@@ -307,7 +307,7 @@ function updateEmployeeRole() {
         },
       ])
       .then((answer) => {
-        let updatedEmployee = { id: answer.employee };
+        let updatedEmployee = answer.employee;
 
         // Select the new department.
         db.query("SELECT * FROM department", (err, res) => {
@@ -360,12 +360,18 @@ function updateEmployeeRole() {
                       },
                     ])
                     .then((answer) => {
-                      console.log(answer);
+                      // Update database with employee's new role.  
+                      db.query(`UPDATE employee SET role_id = "${answer.role}" WHERE employee.id = "${updatedEmployee}"`, (err, res) => {
+                        if (err) throw err;
+                        console.log(`Employee role updated.`)
+                      })
 
+                      // Does user want to take shortcut to update manager?
                       if (answer.newManager === "yes") {
                         console.log("Selected Yes");
+                        // Will include shortcut here.
                       } else if (answer.newManager === "no") {
-                        console.log("Selected No")
+                        selectTask();
                       }
                     });
                 }
