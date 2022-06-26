@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const db = require("./config/connection");
 require("console.table");
 
-// START: Introduces the application and begins the select task function.
+// START: Introduces application, runs the select task function.
 function start() {
   console.log("Welcome to the Employee Tracker.");
   selectTask();
@@ -46,7 +46,7 @@ function selectTask() {
           {
             name: "Update Employee's Role",
             value: "updateEmployee",
-          }
+          },
         ],
       },
     ])
@@ -76,7 +76,7 @@ function selectTask() {
     });
 }
 
-// VIEW ALL DEPARTMENTS: Table logs to the console displaying all departments.
+// Log all the departments to the console, presented as a table.
 function viewAllDepartments() {
   db.query("SELECT * FROM department", (err, data) => {
     if (err) throw err;
@@ -85,8 +85,7 @@ function viewAllDepartments() {
   });
 }
 
-// VIEW ALL ROLES: Table logs to console displaying all roles across departments.
-// Query references primary key of department id to return the department name.
+// Logs all the roles to the console, including their department, presented as a table. 
 function viewAllRoles() {
   db.query(
     "SELECT roles.id, title, department.department_name AS department, salary FROM roles JOIN department ON roles.department_id = department.id",
@@ -98,8 +97,7 @@ function viewAllRoles() {
   );
 }
 
-// VIEW ALL EMPLOYEES: Table logs to console displaying all employee data.
-// Query joins on department, roles and manager data to build full employee profile.
+// Logs all the employees to the console, including departments and roles.
 function viewAllEmployees() {
   db.query(
     "SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id",
@@ -114,8 +112,7 @@ function viewAllEmployees() {
 }
 // BUG: Currently only returns employees with a manager; when manager is set to 'Null', this query does not return a row in the table.
 
-// CREATE NEW DEPARTMENT: Asks user to name a new department.
-// Query inserts the user's input as a new entry in the department database.
+// Asks user to name a new department, inserts it into the database.
 function createDepartment() {
   inquirer
     .prompt([
@@ -138,8 +135,9 @@ function createDepartment() {
     });
 }
 
-// Add a role
+// Asks user prompts to create a new role, then adds it to the database.
 function createRole() {
+  // Fetch all departments, so can present a list to the user.
   db.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
     let department = res.map((departments) => ({
@@ -166,6 +164,7 @@ function createRole() {
         },
       ])
       .then((answers) => {
+        // Use answers to create a new role, and insert it into the database.
         db.query(
           "INSERT INTO roles SET ?",
           {
@@ -186,12 +185,15 @@ function createRole() {
 }
 
 function addEmployee() {
+  // Fetch list of the departments for the first set of inquirer prompts.
   db.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
     let departments = res.map((department) => ({
       name: department.department_name,
       value: department.id,
     }));
+    // Ask new employee name, then which department.
+    // Can use department to provide shortlist of roles and managers.
     inquirer
       .prompt([
         {
@@ -214,20 +216,24 @@ function addEmployee() {
       .then((answer) => {
         console.log("Answer is: " + answer);
         let department = answer.department;
-        let employee = { first_name: answer.first_name,
+        let employee = {
+          first_name: answer.first_name,
           last_name: answer.last_name,
-        }
-        console.log("Department is: " + department);
+        };
+        // Query database for all roles from chosen department.
         db.query(
           `SELECT * FROM roles WHERE (department_id) = ("${department}")`,
           (err, res) => {
-            // might be value
             if (err) throw err;
             console.log("Query response is: " + res);
             let roles = res.map((role) => ({
               name: role.title,
               value: role.id,
             }));
+        // Query Database for all staff from chosen department.
+        db.query(
+          
+        )
             inquirer
               .prompt([
                 {
@@ -262,30 +268,30 @@ function addEmployee() {
 }
 // Need to add manager ID here.
 
-function updateEmployee () {
+function updateEmployee() {
   db.query("SELECT * FROM employee", (req, res) => {
     let employees = res.map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
-    inquirer.prompt([
-      {
-        type: "list",
-        name: "employee",
-        message: "Which employee's role would you like to update?",
-        choices: employees,
-      },
-    ]).then((answer) => {
-      console.log(answer);
-      let updatedEmployee = {
-          employeeId: answer.employee,        
-      };
-      console.log(updatedEmployee);
-    });
-  })
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "employee",
+          message: "Which employee's role would you like to update?",
+          choices: employees,
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        let updatedEmployee = {
+          employeeId: answer.employee,
+        };
+        console.log(updatedEmployee);
+      });
+  });
 }
-
-
 
 // Update an employee's role
 // Query the employees - so there is a list of the employees
