@@ -70,8 +70,10 @@ function selectTask() {
           break;
         case "newEmployee":
           addEmployee();
+          break;
         case "updateEmployee":
           updateEmployee();
+          break;
       }
     });
 }
@@ -85,7 +87,7 @@ function viewAllDepartments() {
   });
 }
 
-// Logs all the roles to the console, including their department, presented as a table. 
+// Logs all the roles to the console, including their department, presented as a table.
 function viewAllRoles() {
   db.query(
     "SELECT roles.id, title, department.department_name AS department, salary FROM roles JOIN department ON roles.department_id = department.id",
@@ -214,7 +216,6 @@ function addEmployee() {
         },
       ])
       .then((answer) => {
-        console.log("Answer is: " + answer);
         let department = answer.department;
         let employee = {
           first_name: answer.first_name,
@@ -230,10 +231,11 @@ function addEmployee() {
               name: role.title,
               value: role.id,
             }));
-        // Query Database for all staff from chosen department.
-        db.query(
-          
-        )
+            // Query Database for all staff from chosen department.
+            // db.query(
+
+            // )
+            let managers = ["Jane", "Frank", "Jessie"];
             inquirer
               .prompt([
                 {
@@ -243,8 +245,16 @@ function addEmployee() {
                     "Which role would you like to assign to this employee?",
                   choices: roles,
                 },
+                {
+                  type: "list",
+                  name: "manager_id",
+                  message:
+                    "Which member of this department would you like the new employee to report to?",
+                  choices: managers,
+                },
               ])
               .then((answers) => {
+                console.log(answers);
                 db.query(
                   "INSERT INTO employee SET ?",
                   {
@@ -255,7 +265,7 @@ function addEmployee() {
                   (err, res) => {
                     if (err) throw err;
                     console.log(
-                      `${employee.first_name} ${employee.last_name} was successfully added to the ${department} database.`
+                      `${employee.first_name} ${employee.last_name} was successfully added to the database. Their manager is ${answers.managers}`
                     );
                     selectTask();
                   }
