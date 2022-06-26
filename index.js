@@ -389,9 +389,9 @@ function updateEmployeeRole() {
   });
 }
 
-// Update employees manager - select employee
-
-// Update employees manager - pass as input
+// TO DO NEXT: Bonus tasks
+// FUNCTION to Select Employee who's Manager is going to get updated
+// FUNCTION to update the employee's manager. 
 
 function closeApp () {
   process.exit();
