@@ -47,6 +47,10 @@ function selectTask() {
             name: "Update Employee's Role",
             value: "updateEmployeeRole",
           },
+          {
+            name: "EXIT",
+            value: "close",
+          }
         ],
       },
     ])
@@ -73,6 +77,9 @@ function selectTask() {
           break;
         case "updateEmployeeRole":
           updateEmployeeRole();
+          break;
+        case "close":
+          closeApp();
           break;
       }
     });
@@ -368,7 +375,7 @@ function updateEmployeeRole() {
 
                       // Does user want to take shortcut to update manager?
                       if (answer.newManager === "yes") {
-                        console.log("Selected Yes");
+                        console.log("Selected yet: but feature to change manager not yet built in current version of application.");
                         // Will include shortcut here.
                       } else if (answer.newManager === "no") {
                         selectTask();
@@ -386,5 +393,8 @@ function updateEmployeeRole() {
 
 // Update employees manager - pass as input
 
+function closeApp () {
+  process.exit();
+}
 
 start();

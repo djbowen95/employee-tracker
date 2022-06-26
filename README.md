@@ -41,8 +41,6 @@ This wasn't the most exciting project to work on, but I do think that trying to 
 
 I do also feel like this code is unnecessarily long and that it makes it difficult to read. I would really like to modulize it or break it down into exported chunks, ie. 'queries' and 'prompts' that can be put in external libraries. I need to look into / work out the most sensible file structure to do this.  
 
-Finally, I haven't written a function to quit the application yet! I should really do that. 
-
 ## Contribution
 Please contact me if you would like to contribute to this project! I am very happy for people to take bits from it if they think it will be useful. My contact details are listed below.
 
