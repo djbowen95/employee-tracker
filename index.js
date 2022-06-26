@@ -45,7 +45,7 @@ function selectTask() {
           },
           {
             name: "Update Employee's Role",
-            value: "updateEmployee",
+            value: "updateEmployeeRole",
           },
         ],
       },
@@ -71,8 +71,8 @@ function selectTask() {
         case "newEmployee":
           addEmployee();
           break;
-        case "updateEmployee":
-          updateEmployee();
+        case "updateEmployeeRole":
+          updateEmployeeRole();
           break;
       }
     });
@@ -102,9 +102,7 @@ function viewAllRoles() {
 // Logs all the employees to the console, including departments and roles.
 function viewAllEmployees() {
   db.query(
-    "SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id",
-    // "SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department, managers.first_name AS manager FROM employee INNER JOIN employee AS managers ON employee.manager_id = managers.id LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id",
-    //    "SELECT employee.id, employee.first_name, roles.title AS job_title, department.department_name AS department, managers.first_name AS manager FROM employee JOIN employee AS managers ON employee.manager_id = managers.id JOIN roles ON employee.role_id = roles.id JOIN department ON roles.department_id = department.id",
+    "SELECT employee.id, employee.first_name, employee.last_name, roles.title AS job_title, department.department_name AS department, managers.first_name AS manager FROM employee LEFT JOIN employee AS managers ON employee.manager_id = managers.id LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id",
     (err, data) => {
       if (err) throw err;
       console.table(data);
@@ -112,7 +110,6 @@ function viewAllEmployees() {
     }
   );
 }
-// BUG: Currently only returns employees with a manager; when manager is set to 'Null', this query does not return a row in the table.
 
 // Asks user to name a new department, inserts it into the database.
 function createDepartment() {
@@ -186,6 +183,7 @@ function createRole() {
   });
 }
 
+// Asks for details of new employee: name, department, role, manager.
 function addEmployee() {
   // Fetch list of the departments for the first set of inquirer prompts.
   db.query("SELECT * FROM department", (err, res) => {
@@ -244,7 +242,7 @@ function addEmployee() {
                   name: `${manager.first_name} ${manager.last_name}`,
                   value: manager.id,
                 }));
-                
+
                 // Ask user which role and management to assign the new employee.
                 inquirer
                   .prompt([
@@ -264,7 +262,6 @@ function addEmployee() {
                     },
                   ])
                   .then((answers) => {
-
                     // Insert new employee data into the database.
                     db.query(
                       "INSERT INTO employee SET ?",
@@ -290,14 +287,16 @@ function addEmployee() {
       });
   });
 }
-// Need to add manager ID here.
 
-function updateEmployee() {
-  db.query("SELECT * FROM employee", (req, res) => {
+function updateEmployeeRole() {
+  // Select the employee to update.
+  db.query(`SELECT * FROM employee`, (err, res) => {
+    if (err) throw err;
     let employees = res.map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
+
     inquirer
       .prompt([
         {
@@ -308,11 +307,65 @@ function updateEmployee() {
         },
       ])
       .then((answer) => {
-        console.log(answer);
-        let updatedEmployee = {
-          employeeId: answer.employee,
-        };
-        console.log(updatedEmployee);
+        let updatedEmployee = { id: answer.employee };
+
+        // Select the new department.
+        db.query("SELECT * FROM department", (err, res) => {
+          if (err) throw err;
+          let departments = res.map((department) => ({
+            name: department.department_name,
+            value: department.id,
+          }));
+
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "department",
+                message: "Which department is this employee's new role in?",
+                choices: departments,
+              },
+            ])
+            .then((answer) => {
+              let departmentId = answer.department;
+
+              // Select the new role.
+              // Also prompt user to ask if they want to select a new manager.
+              db.query(
+                `SELECT * FROM roles WHERE department_id = ${departmentId}`,
+                (err, res) => {
+                  if (err) throw err;
+                  let roles = res.map((role) => ({
+                    name: role.title,
+                    value: role.id,
+                  }));
+
+                  inquirer
+                    .prompt([
+                      {
+                        type: "list",
+                        name: "role",
+                        message: "What will this employee's new role be?",
+                        choices: roles,
+                      },
+                      {
+                        type: "list",
+                        name: "newManager",
+                        message:
+                          "Would you like to allocate a new manager to this employee?",
+                        choices: [
+                          { name: "Yes, select a new manager", value: "yes" },
+                          { name: "No, return to menu", value: "no" },
+                        ],
+                      },
+                    ])
+                    .then((answer) => {
+                      console.log(answer);
+                    });
+                }
+              );
+            });
+        });
       });
   });
 }
@@ -323,12 +376,13 @@ function updateEmployee() {
 // UPDATE employee SET ? WHERE ?
 // [{role_id - answers (foreign key in employee)}, {id: answer}]
 
-// BONUS: Update employee's manager
-// BONUS: View employee by manager
-// BONUS: View employees by department
-// BONUS: Delete department
-// BONUS: Delete role
-// BONUS: Delete employee
+// BONUS: Update employee's manager <- Easy
+// BONUS: View employee by manager <- Harder
+// BONUS: View employees by department <- Easy
+// BONUS: Delete department <- Medium
+// BONUS: Delete role <- Medium
+// BONUS: Delete employee <- Easy
+// BONUS: Change salaries!
 // BONUS: View 'utilised budget', ie salary for everyone in the department
 // Function to Quit Application
 
